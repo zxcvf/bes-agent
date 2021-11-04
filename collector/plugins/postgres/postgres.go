@@ -7,11 +7,11 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cloudinsight/cloudinsight-agent/collector"
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
-	"github.com/cloudinsight/cloudinsight-agent/common/metric"
-	"github.com/cloudinsight/cloudinsight-agent/common/plugin"
-	"github.com/cloudinsight/cloudinsight-agent/common/util"
+	"bes-agent/collector"
+	"bes-agent/common/log"
+	"bes-agent/common/metric"
+	"bes-agent/common/plugin"
+	"bes-agent/common/util"
 	"github.com/lib/pq"
 )
 
@@ -79,16 +79,16 @@ SELECT datname,
 	}
 
 	commonMetrics = map[string]metric.Field{
-		"numbackends":                                   {"postgresql.connections", gauge},
-		"xact_commit":                                   {"postgresql.commits", rate},
-		"xact_rollback":                                 {"postgresql.rollbacks", rate},
-		"blks_read":                                     {"postgresql.disk_read", rate},
-		"blks_hit":                                      {"postgresql.buffer_hit", rate},
-		"tup_returned":                                  {"postgresql.rows_returned", rate},
-		"tup_fetched":                                   {"postgresql.rows_fetched", rate},
-		"tup_inserted":                                  {"postgresql.rows_inserted", rate},
-		"tup_updated":                                   {"postgresql.rows_updated", rate},
-		"tup_deleted":                                   {"postgresql.rows_deleted", rate},
+		"numbackends":   {"postgresql.connections", gauge},
+		"xact_commit":   {"postgresql.commits", rate},
+		"xact_rollback": {"postgresql.rollbacks", rate},
+		"blks_read":     {"postgresql.disk_read", rate},
+		"blks_hit":      {"postgresql.buffer_hit", rate},
+		"tup_returned":  {"postgresql.rows_returned", rate},
+		"tup_fetched":   {"postgresql.rows_fetched", rate},
+		"tup_inserted":  {"postgresql.rows_inserted", rate},
+		"tup_updated":   {"postgresql.rows_updated", rate},
+		"tup_deleted":   {"postgresql.rows_deleted", rate},
 		"pg_database_size(datname) AS pg_database_size": {"postgresql.database_size", gauge},
 	}
 

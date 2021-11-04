@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"bes-agent/collector"
+	"bes-agent/common/log"
+	"bes-agent/common/plugin"
+	"bes-agent/common/util"
 	"github.com/BurntSushi/toml"
-	"github.com/cloudinsight/cloudinsight-agent/collector"
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
-	"github.com/cloudinsight/cloudinsight-agent/common/plugin"
-	"github.com/cloudinsight/cloudinsight-agent/common/util"
 )
 
 // VERSION sets the agent version here.

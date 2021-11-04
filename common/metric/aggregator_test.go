@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
+	"bes-agent/common/log"
 	"github.com/stretchr/testify/assert"
 )
 

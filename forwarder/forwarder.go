@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cloudinsight/cloudinsight-agent/common/api"
-	"github.com/cloudinsight/cloudinsight-agent/common/config"
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
+	"bes-agent/common/api"
+	"bes-agent/common/config"
+	"bes-agent/common/log"
 )
 
 // NewForwarder creates a new instance of Forwarder.

@@ -3,10 +3,10 @@ package statsd
 import (
 	"time"
 
-	"github.com/cloudinsight/cloudinsight-agent/common/api"
-	"github.com/cloudinsight/cloudinsight-agent/common/config"
-	"github.com/cloudinsight/cloudinsight-agent/common/emitter"
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
+	"bes-agent/common/api"
+	"bes-agent/common/config"
+	"bes-agent/common/emitter"
+	"bes-agent/common/log"
 )
 
 // Reporter XXX

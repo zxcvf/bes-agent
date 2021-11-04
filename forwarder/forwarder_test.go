@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cloudinsight/cloudinsight-agent/common/api"
-	"github.com/cloudinsight/cloudinsight-agent/common/config"
+	"bes-agent/common/api"
+	"bes-agent/common/config"
 	"github.com/stretchr/testify/assert"
 )
 

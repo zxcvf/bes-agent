@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cloudinsight/cloudinsight-agent/common/config"
-	"github.com/cloudinsight/cloudinsight-agent/common/metric"
+	"bes-agent/common/config"
+	"bes-agent/common/metric"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

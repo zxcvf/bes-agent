@@ -1,7 +1,7 @@
 # Cloudinsight Agent
 
 [![Build Status](https://travis-ci.org/cloudinsight/cloudinsight-agent.svg?branch=master)](https://travis-ci.org/cloudinsight/cloudinsight-agent)
-[![Go Report Card](https://goreportcard.com/badge/github.com/cloudinsight/cloudinsight-agent)](https://goreportcard.com/report/github.com/cloudinsight/cloudinsight-agent)
+[![Go Report Card](https://goreportcard.com/badge/bes-agent)](https://goreportcard.com/report/bes-agent)
 
 Cloudinsight 探针可以收集它所在操作系统的各种指标，然后发送到 [Cloudinsight](https://cloud.oneapm.com) 后端服务，探针由 Go 语言实现。
 
@@ -12,7 +12,7 @@ Cloudinsight 探针可以收集它所在操作系统的各种指标，然后发�
 ```
 $ mkdir -p $GOPATH/src/github.com/cloudinsight
 $ cd $GOPATH/src/github.com/cloudinsight
-$ git clone https://github.com/cloudinsight/cloudinsight-agent
+$ git clone https://bes-agent
 $ cd cloudinsight-agent
 $ make build
 ```

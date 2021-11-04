@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/cloudinsight/cloudinsight-agent/common"
+	"bes-agent/common"
 )
 
 var pfStatus = `

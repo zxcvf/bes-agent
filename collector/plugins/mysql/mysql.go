@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cloudinsight/cloudinsight-agent/collector"
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
-	"github.com/cloudinsight/cloudinsight-agent/common/metric"
-	"github.com/cloudinsight/cloudinsight-agent/common/plugin"
+	"bes-agent/collector"
+	"bes-agent/common/log"
+	"bes-agent/common/metric"
+	"bes-agent/common/plugin"
 	"github.com/go-sql-driver/mysql"
 )
 

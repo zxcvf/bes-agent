@@ -10,11 +10,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cloudinsight/cloudinsight-agent/collector"
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
-	"github.com/cloudinsight/cloudinsight-agent/common/metric"
-	"github.com/cloudinsight/cloudinsight-agent/common/plugin"
-	"github.com/cloudinsight/cloudinsight-agent/common/util"
+	"bes-agent/collector"
+	"bes-agent/common/log"
+	"bes-agent/common/metric"
+	"bes-agent/common/plugin"
+	"bes-agent/common/util"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 )

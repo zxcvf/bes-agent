@@ -3,7 +3,7 @@ package emitter
 import (
 	"testing"
 
-	"github.com/cloudinsight/cloudinsight-agent/common/metric"
+	"bes-agent/common/metric"
 	"github.com/stretchr/testify/assert"
 )
 

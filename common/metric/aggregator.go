@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
-	"github.com/cloudinsight/cloudinsight-agent/common/util"
+	"bes-agent/common/log"
+	"bes-agent/common/util"
 )
 
 // Aggregator XXX

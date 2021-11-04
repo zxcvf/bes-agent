@@ -1,7 +1,7 @@
 # Cloudinsight Agent
 
 [![Build Status](https://travis-ci.org/cloudinsight/cloudinsight-agent.svg?branch=master)](https://travis-ci.org/cloudinsight/cloudinsight-agent)
-[![Go Report Card](https://goreportcard.com/badge/github.com/cloudinsight/cloudinsight-agent)](https://goreportcard.com/report/github.com/cloudinsight/cloudinsight-agent)
+[![Go Report Card](https://goreportcard.com/badge/bes-agent)](https://goreportcard.com/report/bes-agent)
 [![codecov](https://codecov.io/gh/cloudinsight/cloudinsight-agent/branch/master/graph/badge.svg)](https://codecov.io/gh/cloudinsight/cloudinsight-agent)
 
 [中文版 README](README_zh-CN.md)
@@ -16,7 +16,7 @@ To build Cloudinsight Agent from the source code yourself you need to have a wor
 ```
 $ mkdir -p $GOPATH/src/github.com/cloudinsight
 $ cd $GOPATH/src/github.com/cloudinsight
-$ git clone https://github.com/cloudinsight/cloudinsight-agent
+$ git clone https://bes-agent
 $ cd cloudinsight-agent
 $ make build
 ```

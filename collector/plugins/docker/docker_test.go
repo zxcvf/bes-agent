@@ -3,7 +3,7 @@ package docker
 import (
 	"testing"
 
-	"github.com/cloudinsight/cloudinsight-agent/common"
+	"bes-agent/common"
 )
 
 func TestDockerCheck(t *testing.T) {

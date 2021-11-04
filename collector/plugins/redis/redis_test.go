@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/cloudinsight/cloudinsight-agent/common"
-	"github.com/cloudinsight/cloudinsight-agent/common/metric"
+	"bes-agent/common"
+	"bes-agent/common/metric"
 )
 
 var (

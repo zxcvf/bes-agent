@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/cloudinsight/cloudinsight-agent/common"
-	"github.com/cloudinsight/cloudinsight-agent/common/metric"
+	"bes-agent/common"
+	"bes-agent/common/metric"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"

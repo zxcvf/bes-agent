@@ -1,9 +1,9 @@
 package example
 
 import (
-	"github.com/cloudinsight/cloudinsight-agent/collector"
-	"github.com/cloudinsight/cloudinsight-agent/common/metric"
-	"github.com/cloudinsight/cloudinsight-agent/common/plugin"
+	"bes-agent/collector"
+	"bes-agent/common/metric"
+	"bes-agent/common/plugin"
 )
 
 // NewExample XXX

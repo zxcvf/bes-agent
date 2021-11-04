@@ -3,7 +3,7 @@ package system
 import (
 	"testing"
 
-	"github.com/cloudinsight/cloudinsight-agent/common"
+	"bes-agent/common"
 	"github.com/shirou/gopsutil/disk"
 )
 

@@ -5,9 +5,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cloudinsight/cloudinsight-agent/common/config"
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
-	"github.com/cloudinsight/cloudinsight-agent/common/metric"
+	"bes-agent/common/config"
+	"bes-agent/common/log"
+	"bes-agent/common/metric"
 )
 
 const (

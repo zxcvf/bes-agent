@@ -4,7 +4,7 @@ import (
 	"hash/fnv"
 	"math"
 
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
+	"bes-agent/common/log"
 	yaml "gopkg.in/yaml.v2"
 )
 

@@ -1,6 +1,6 @@
 package collector
 
-import "github.com/cloudinsight/cloudinsight-agent/common/plugin"
+import "bes-agent/common/plugin"
 
 // Checker XXX
 type Checker func(conf plugin.InitConfig) plugin.Plugin

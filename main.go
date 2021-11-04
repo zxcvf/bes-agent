@@ -9,13 +9,13 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/cloudinsight/cloudinsight-agent/agent"
-	"github.com/cloudinsight/cloudinsight-agent/collector"
-	_ "github.com/cloudinsight/cloudinsight-agent/collector/plugins"
-	"github.com/cloudinsight/cloudinsight-agent/common/config"
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
-	"github.com/cloudinsight/cloudinsight-agent/forwarder"
-	"github.com/cloudinsight/cloudinsight-agent/statsd"
+	"bes-agent/agent"
+	"bes-agent/collector"
+	_ "bes-agent/collector/plugins"
+	"bes-agent/common/config"
+	"bes-agent/common/log"
+	"bes-agent/forwarder"
+	"bes-agent/statsd"
 )
 
 var fConfig = flag.String("config", "", "configuration file to load")

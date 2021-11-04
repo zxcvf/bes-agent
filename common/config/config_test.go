@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	_ "github.com/cloudinsight/cloudinsight-agent/collector/plugins"
-	"github.com/cloudinsight/cloudinsight-agent/common/log"
+	_ "bes-agent/collector/plugins"
+	"bes-agent/common/log"
 	"github.com/stretchr/testify/assert"
 )
 
