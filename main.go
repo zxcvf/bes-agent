@@ -23,11 +23,11 @@ var fTest = flag.Bool("test", false, "collect metrics, print them out, and exit"
 var fPluginFilters = flag.String("plugin-filter", "",
 	"filter the plugins to enable, separator is :")
 
-const usage = `Cloudinsight Agent, a system tool that monitors system processes and services.
+const usage = `BES Agent, a system tool that monitors system processes and services.
 
 Usage:
 
-  cloudinsight-agent [commands|flags]
+  bes-agent [commands|flags]
 
 The commands & flags are:
 
@@ -37,14 +37,14 @@ The commands & flags are:
 
 Examples:
 
-  # run cloudinsight-agent with all plugins defined in config file
-  cloudinsight-agent --config cloudinsight-agent.conf
+  # run bes-agent with all plugins defined in config file
+  bes-agent --config bes-agent.conf
 
   # run a single collection, outputing metrics to stdout
-  cloudinsight-agent --config cloudinsight-agent.conf -test
+  bes-agent --config bes-agent.conf -test
 
-  # run cloudinsight-agent, enabling the system & disk plugins
-  cloudinsight-agent --config cloudinsight-agent.conf --plugin-filter system:disk
+  # run bes-agent, enabling the system & disk plugins
+  bes-agent --config bes-agent.conf --plugin-filter system:disk
 `
 
 func startAgent(shutdown chan struct{}, conf *config.Config, test bool) {

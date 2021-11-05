@@ -12,6 +12,7 @@ import (
 )
 
 // Collector XXX
+// System information collector
 type Collector interface {
 	Name() string
 	Collect() (interface{}, error)

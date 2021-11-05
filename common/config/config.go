@@ -27,14 +27,14 @@ func NewConfig(confPath string, pluginFilters []string) (*Config, error) {
 		return nil, fmt.Errorf("Failed to load the config file: %s", err)
 	}
 
-	if c.GlobalConfig.LicenseKey == "" {
-		return nil, fmt.Errorf("LicenseKey must be specified in the config file.")
-	}
+	//if c.GlobalConfig.LicenseKey == "" {
+	//	return nil, fmt.Errorf("LicenseKey must be specified in the config file.")
+	//}
 
 	return c, nil
 }
 
-// Config represents cloudinsight-agent's configuration file.
+// Config represents bes-agent's configuration file.
 type Config struct {
 	GlobalConfig  GlobalConfig  `toml:"global"`
 	LoggingConfig LoggingConfig `toml:"logging"`
@@ -62,24 +62,24 @@ type LoggingConfig struct {
 }
 
 // Try to find a default config file at these locations (in order):
-//   1. $CWD/cloudinsight-agent.conf
-//   2. /etc/cloudinsight-agent/cloudinsight-agent.conf
+//   1. $CWD/bes-agent.conf
+//   2. /etc/bes-agent/bes-agent.conf
 //
 func getDefaultConfigPath() (string, error) {
-	file := "cloudinsight-agent.conf"
-	etcfile := "/etc/cloudinsight-agent/cloudinsight-agent.conf"
+	file := "bes-agent.conf"
+	etcfile := "/etc/bes-agent/bes-agent.conf"
 	return getPath(file, etcfile)
 }
 
 // Try to find plugins path at these locations (in order):
 //   1. $CONFPATH/collector/conf.d
 //   2. $CONFPATH/../../../collector/conf.d  **This is just for test case.**
-//   3. /etc/cloudinsight-agent/conf.d
+//   3. /etc/bes-agent/conf.d
 //
 func getPluginsPath(confPath string) (string, error) {
 	path := filepath.Join(filepath.Dir(confPath), "collector/conf.d")
 	testpath := filepath.Join(filepath.Dir(confPath), "../../../collector/conf.d")
-	etcpath := "/etc/cloudinsight-agent/conf.d"
+	etcpath := "/etc/bes-agent/conf.d"
 	return getPath(path, testpath, etcpath)
 }
 
@@ -120,15 +120,21 @@ func (c *Config) LoadConfig(confPath string) error {
 	}
 
 	for _, file := range files {
+		//log.Errorf("aaaaaaaaaaa %s", file)
+
 		pluginConfig, err := plugin.LoadConfig(file)
 		if err != nil {
 			log.Errorf("Failed to parse Plugin Config %s: %s", file, err)
 			continue
 		}
 
+		file = filepath.ToSlash(file)
 		filename := path.Base(file)
 		pluginName := strings.Split(filename, ".")[0]
 		err = c.addPlugin(pluginName, pluginConfig)
+		//log.Errorf("bbbbbbbbbbbb %s", pluginConfig)
+		fmt.Println(err)
+
 		if err != nil {
 			log.Errorf("Failed to load Plugin %s: %s", pluginName, err)
 			continue

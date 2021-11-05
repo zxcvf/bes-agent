@@ -19,7 +19,7 @@ func NewForwarder(conf *config.Config) *Forwarder {
 	}
 }
 
-// Forwarder sends the metrics to Cloudinsight data center, which is collected by Collector and Statsd.
+// Forwarder sends the metrics to BES data center, which is collected by Collector and Statsd.
 type Forwarder struct {
 	api  *api.API
 	conf *config.Config

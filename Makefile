@@ -27,10 +27,10 @@ vet:
 
 build:
 	@echo ">> building binaries"
-	@$(GO) build -v -o ./bin/cloudinsight-agent
+	@$(GO) build -v -o ./bin/bes-agent
 
 run: build
-	./bin/cloudinsight-agent
+	./bin/bes-agent
 
 generate-cover-data:
 	@echo ">> generating coverage profiles"
