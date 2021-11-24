@@ -1,6 +1,7 @@
 package agent
 
 import (
+	//"fmt"
 	"strings"
 	"time"
 
@@ -40,6 +41,7 @@ func NewCollector(conf *config.Config) *Collector {
 
 // Post sends the metrics to Forwarder API.
 func (c *Collector) Post(metrics []interface{}) error {
+	//fmt.Println("collector post!!!!!!")
 	start := time.Now()
 	payload := NewPayload(c.conf)
 	payload.Metrics = metrics
@@ -62,15 +64,15 @@ func (c *Collector) Post(metrics []interface{}) error {
 		}
 	}
 
-	processes := gohai.GetProcesses()
-	if c.IsFirstRun() {
-		// When first run, we will retrieve processes to get cpuPercent.
-		time.Sleep(1 * time.Second)
-		processes = gohai.GetProcesses()
-	}
+	//processes := gohai.GetProcesses()
+	//if c.IsFirstRun() {
+	//	// When first run, we will retrieve processes to get cpuPercent.
+	//	time.Sleep(1 * time.Second)
+	//	processes = gohai.GetProcesses()
+	//}
 
 	payload.Processes = map[string]interface{}{
-		"processes":  processes,
+		//"processes":  processes,
 		"licenseKey": c.conf.GlobalConfig.LicenseKey,
 		"host":       c.conf.GetHostname(),
 	}
@@ -78,6 +80,7 @@ func (c *Collector) Post(metrics []interface{}) error {
 	err := c.api.SubmitMetrics(payload)
 	elapsed := time.Since(start)
 	if err == nil {
+		//fmt.Printf("Collector Post batch of %d metrics in %s \n", len(metrics), elapsed)
 		log.Debugf("Post batch of %d metrics in %s",
 			len(metrics), elapsed)
 	}

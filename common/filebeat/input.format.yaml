@@ -1,0 +1,9 @@
+- type: log
+  enable: true
+  multiline.pattern: %s
+  multiline.negate: %s
+  multiline.match: %s
+  paths:
+%s
+  fileds:
+%s

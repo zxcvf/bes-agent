@@ -37,6 +37,8 @@ var client = &http.Client{
 // Check XXX
 func (n *Nginx) Check(agg metric.Aggregator) error {
 	addr, err := url.Parse(n.NginxStatusURL)
+
+	//fmt.Println("nginx plugin: ", addr)
 	if err != nil {
 		return fmt.Errorf("Unable to parse address '%s': %s", n.NginxStatusURL, err)
 	}

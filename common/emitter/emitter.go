@@ -1,6 +1,7 @@
 package emitter
 
 import (
+	//"fmt"
 	"reflect"
 	"sync"
 	"time"
@@ -95,8 +96,9 @@ func (e *Emitter) emit() {
 // when the metrics size has reached the MetricBatchSize.
 func (e *Emitter) addMetric(metric metric.Metric) {
 	e.metrics.Add(metric)
-	if e.metrics.Len() == e.MetricBatchSize {
+	if e.metrics.Len() == 50 {
 		batch := e.metrics.Batch(e.MetricBatchSize)
+		//fmt.Println("post!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 		err := e.Post(batch)
 		if err != nil {
 			e.failMetrics.Add(batch...)

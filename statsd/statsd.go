@@ -1,6 +1,7 @@
 package statsd
 
 import (
+	"fmt"
 	"net"
 	"sync"
 	"time"
@@ -43,7 +44,7 @@ type Statsd struct {
 // Run XXX
 func (s *Statsd) Run(shutdown chan struct{}) error {
 	var wg sync.WaitGroup
-	interval := 30 * time.Second
+	interval := 15 * time.Second
 
 	// channel shared between all Plugin threads for collecting metrics
 	metricC := make(chan metric.Metric, 10000)
@@ -64,6 +65,7 @@ func (s *Statsd) Run(shutdown chan struct{}) error {
 		}
 	}()
 
+	// 解析器 parser 监控 Statsd.in 通道, 如果有数据包packet准备就绪, 它将解析数据包成statsd字符串 并调用parseStatsdLine, which将解析single statsd metric.
 	go func() {
 		defer wg.Done()
 		if err := s.parser(shutdown, metricC, interval); err != nil {
@@ -88,6 +90,7 @@ func (s *Statsd) listen(shutdown chan struct{}) error {
 	}
 
 	log.Infoln("Statsd listening on:", addr)
+	fmt.Println("Statsd listening on:", addr)
 
 	for {
 		select {
@@ -107,6 +110,7 @@ func (s *Statsd) handleClient(conn *net.UDPConn) {
 	buf := make([]byte, UDPMaxPacketSize)
 	n, _, err := conn.ReadFromUDP(buf)
 	if err != nil {
+		fmt.Println("failed to read UDP msg because of ", err.Error())
 		log.Infoln("failed to read UDP msg because of ", err.Error())
 		return
 	}
@@ -140,9 +144,11 @@ func (s *Statsd) parser(shutdown chan struct{}, metricC chan metric.Metric, inte
 		case <-shutdown:
 			return nil
 		case <-ticker.C:
+			//fmt.Println("Aggregator 冲洗")
 			agg.Flush()
 		case packet = <-s.in:
 			log.Debugf("Received packet: %s", string(packet))
+			//fmt.Println("Received packet: ", string(packet))
 			agg.SubmitPackets(string(packet))
 		}
 	}

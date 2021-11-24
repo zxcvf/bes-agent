@@ -1,0 +1,18 @@
+- type: log
+  enable: true
+  multiline.pattern: asdY&%R&*)(n089
+  multiline.negate: false
+  multiline.match: asdY&%R&*)(n089
+  paths:
+  - asdasd
+  - 123125
+  - 125
+
+  fileds:
+    aaa: 1
+    bbb: 1
+    ccc: 1
+    ddd: 1
+    log_type: asdY&%R&*)(n089
+    object_type: asdY&%R&*)(n089
+

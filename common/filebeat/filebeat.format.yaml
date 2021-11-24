@@ -1,0 +1,25 @@
+filebeat.config.inputs:
+  path: %s/input.yml
+  reload.enabled: true
+  reload.period: 5s
+
+filebeat.config.modules:
+  path: %s/modules.d/*.yml
+
+output.kafka:
+  hosts:
+%s
+  topic: %s
+  partition.round_robin:
+    reachable_only: false
+  required_acks: 1
+  keep_alive: 10s
+  enabled: true
+
+processors:
+  -
+    add_host_metadata:
+      netinfo.enabled: true
+
+filebeat.shutdown_timeout: 5s
+

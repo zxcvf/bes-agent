@@ -21,6 +21,12 @@ type RunningPlugin struct {
 	Plugins []Plugin
 }
 
+// RunningPythonPlugin XXX
+type RunningPythonPlugin struct {
+	Name   string
+	Plugin string // 先跳过instances (目前是python模块)
+}
+
 // InitConfig XXX
 type InitConfig map[string]interface{}
 

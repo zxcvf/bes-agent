@@ -1,0 +1,34 @@
+2021-11-20T10:14:22.840+0800	INFO	instance/beat.go:610	Home path: [C:\Users\lie\Desktop\cloudinsight-agent\filebeat] Config path: [C:\Users\lie\Desktop\cloudinsight-agent\filebeat] Data path: [C:\Users\lie\Desktop\cloudinsight-agent\filebeat\data] Logs path: [C:\Users\lie\Desktop\cloudinsight-agent\filebeat\logs]
+2021-11-20T10:14:22.854+0800	INFO	instance/beat.go:618	Beat ID: d3fae200-91b5-4e11-9c1c-e31d9bc6fd73
+2021-11-20T10:14:22.872+0800	INFO	add_cloud_metadata/add_cloud_metadata.go:89	add_cloud_metadata: hosting provider type not detected.
+2021-11-20T10:14:22.872+0800	INFO	[beat]	instance/beat.go:941	Beat info	{"system_info": {"beat": {"path": {"config": "C:\\Users\\lie\\Desktop\\cloudinsight-agent\\filebeat", "data": "C:\\Users\\lie\\Desktop\\cloudinsight-agent\\filebeat\\data", "home": "C:\\Users\\lie\\Desktop\\cloudinsight-agent\\filebeat", "logs": "C:\\Users\\lie\\Desktop\\cloudinsight-agent\\filebeat\\logs"}, "type": "filebeat", "uuid": "d3fae200-91b5-4e11-9c1c-e31d9bc6fd73"}}}
+2021-11-20T10:14:22.873+0800	INFO	[beat]	instance/beat.go:950	Build info	{"system_info": {"build": {"commit": "6d0d0ae079e5cb1d4f224801ac6df926dfb1594c", "libbeat": "7.5.0", "time": "2019-11-26T00:06:11.000Z", "version": "7.5.0"}}}
+2021-11-20T10:14:22.873+0800	INFO	[beat]	instance/beat.go:953	Go runtime info	{"system_info": {"go": {"os":"windows","arch":"amd64","max_procs":8,"version":"go1.12.12"}}}
+2021-11-20T10:14:22.879+0800	INFO	[beat]	instance/beat.go:957	Host info	{"system_info": {"host": {"architecture":"x86_64","boot_time":"2021-11-15T09:20:34.24+08:00","name":"DESKTOP-J2T6IID","ip":["fe80::b072:356a:6761:dbd4/64","192.168.1.132/24","::1/128","127.0.0.1/8","fe80::f0f2:4e74:fd6a:2f9d/64","172.19.48.1/20"],"kernel_version":"10.0.19041.1348 (WinBuild.160101.0800)","mac":["18:c0:4d:f8:66:6f","00:15:5d:7d:58:b4"],"os":{"family":"windows","platform":"windows","name":"Windows 10 Pro","version":"10.0","major":10,"minor":0,"patch":0,"build":"19042.1348"},"timezone":"CST","timezone_offset_sec":28800,"id":"96ec822e-4479-45dd-bc46-cc0314899a81"}}}
+2021-11-20T10:14:22.882+0800	INFO	[beat]	instance/beat.go:986	Process info	{"system_info": {"process": {"cwd": "C:\\Users\\lie\\Desktop\\cloudinsight-agent\\filebeat", "exe": "C:\\Users\\lie\\Desktop\\cloudinsight-agent\\filebeat\\filebeat.exe", "name": "filebeat.exe", "pid": 22700, "ppid": 18900, "start_time": "2021-11-20T10:14:22.780+0800"}}}
+2021-11-20T10:14:22.882+0800	INFO	instance/beat.go:297	Setup Beat: filebeat; Version: 7.5.0
+2021-11-20T10:14:22.882+0800	INFO	[index-management]	idxmgmt/std.go:182	Set output.elasticsearch.index to 'filebeat-7.5.0' as ILM is enabled.
+2021-11-20T10:14:22.882+0800	INFO	elasticsearch/client.go:171	Elasticsearch url: http://localhost:9200
+2021-11-20T10:14:22.882+0800	INFO	[publisher]	pipeline/module.go:97	Beat name: DESKTOP-J2T6IID
+2021-11-20T10:14:22.884+0800	INFO	instance/beat.go:429	filebeat start running.
+2021-11-20T10:14:22.884+0800	INFO	[monitoring]	log/log.go:118	Starting metrics logging every 30s
+2021-11-20T10:14:22.884+0800	INFO	registrar/migrate.go:104	No registry home found. Create: C:\Users\lie\Desktop\cloudinsight-agent\filebeat\data\registry\filebeat
+2021-11-20T10:14:22.885+0800	INFO	registrar/migrate.go:112	Initialize registry meta file
+2021-11-20T10:14:22.886+0800	INFO	registrar/registrar.go:108	No registry file found under: C:\Users\lie\Desktop\cloudinsight-agent\filebeat\data\registry\filebeat\data.json. Creating a new registry file.
+2021-11-20T10:14:22.889+0800	INFO	registrar/registrar.go:145	Loading registrar data from C:\Users\lie\Desktop\cloudinsight-agent\filebeat\data\registry\filebeat\data.json
+2021-11-20T10:14:22.889+0800	INFO	registrar/registrar.go:152	States Loaded from registrar: 0
+2021-11-20T10:14:22.889+0800	INFO	crawler/crawler.go:72	Loading Inputs: 1
+2021-11-20T10:14:22.890+0800	INFO	crawler/crawler.go:106	Loading and starting Inputs completed. Enabled inputs: 0
+2021-11-20T10:14:22.890+0800	INFO	cfgfile/reload.go:171	Config reloader started
+2021-11-20T10:14:22.890+0800	INFO	cfgfile/reload.go:226	Loading of config files completed.
+2021-11-20T10:14:34.461+0800	INFO	beater/filebeat.go:443	Stopping filebeat
+2021-11-20T10:14:34.461+0800	INFO	crawler/crawler.go:139	Stopping Crawler
+2021-11-20T10:14:34.461+0800	INFO	crawler/crawler.go:149	Stopping 0 inputs
+2021-11-20T10:14:34.461+0800	INFO	cfgfile/reload.go:229	Dynamic config reloader stopped
+2021-11-20T10:14:34.461+0800	INFO	crawler/crawler.go:165	Crawler stopped
+2021-11-20T10:14:34.461+0800	INFO	registrar/registrar.go:367	Stopping Registrar
+2021-11-20T10:14:34.461+0800	INFO	registrar/registrar.go:293	Ending Registrar
+2021-11-20T10:14:34.465+0800	INFO	[monitoring]	log/log.go:153	Total non-zero metrics	{"monitoring": {"metrics": {"beat":{"cpu":{"system":{"ticks":62,"time":{"ms":62}},"total":{"ticks":93,"time":{"ms":93},"value":93},"user":{"ticks":31,"time":{"ms":31}}},"handles":{"open":230},"info":{"ephemeral_id":"0bbb222a-fad6-46df-b0f3-cf9d45150848","uptime":{"ms":11669}},"memstats":{"gc_next":8341568,"memory_alloc":4666504,"memory_total":11488336,"rss":35282944},"runtime":{"goroutines":13}},"filebeat":{"harvester":{"open_files":0,"running":0}},"libbeat":{"config":{"module":{"running":0},"reloads":1},"output":{"type":"elasticsearch"},"pipeline":{"clients":0,"events":{"active":0}}},"registrar":{"states":{"current":0},"writes":{"success":2,"total":2}},"system":{"cpu":{"cores":8}}}}}
+2021-11-20T10:14:34.465+0800	INFO	[monitoring]	log/log.go:154	Uptime: 11.6701214s
+2021-11-20T10:14:34.465+0800	INFO	[monitoring]	log/log.go:131	Stopping metrics logging.
+2021-11-20T10:14:34.465+0800	INFO	instance/beat.go:435	filebeat stopped.

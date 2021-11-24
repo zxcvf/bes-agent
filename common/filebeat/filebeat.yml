@@ -1,0 +1,26 @@
+filebeat.config.inputs:
+  path: C:\Users\lie\Desktop\cloudinsight-agent/common/filebeat/input.yml
+  reload.enabled: true
+  reload.period: 5s
+
+filebeat.config.modules:
+  path: C:\Users\lie\Desktop\cloudinsight-agent/filebeat/modules.d/*.yml
+
+output.kafka:
+  hosts:
+  - localhost:9092
+
+  topic: webgate-infrastructure-metric-log
+  partition.round_robin:
+    reachable_only: false
+  required_acks: 1
+  keep_alive: 10s
+  enabled: true
+
+processors:
+  -
+    add_host_metadata:
+      netinfo.enabled: true
+
+filebeat.shutdown_timeout: 5s
+

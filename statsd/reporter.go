@@ -1,6 +1,7 @@
 package statsd
 
 import (
+	"fmt"
 	"time"
 
 	"bes-agent/common/api"
@@ -41,6 +42,8 @@ func (r *Reporter) Post(metrics []interface{}) error {
 	err := r.api.SubmitMetrics(&payload)
 	elapsed := time.Since(start)
 	if err == nil {
+		fmt.Printf("Reporter Post batch of %d metrics in %s", len(metrics), elapsed)
+
 		log.Debugf("Post batch of %d metrics in %s",
 			len(metrics), elapsed)
 	}

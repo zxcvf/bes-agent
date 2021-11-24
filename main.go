@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bes-agent/common/filebeat"
 	"flag"
 	"fmt"
 	"os"
@@ -77,6 +78,13 @@ func startStatsd(shutdown chan struct{}, conf *config.Config) {
 	}
 }
 
+func startFilebeat(shutdown chan struct{}, conf *config.Config) {
+	s := filebeat.NewFilebeat(conf)
+	if err := s.Run(shutdown); err != nil {
+		log.Fatal(err)
+	}
+}
+
 func usageExit(rc int) {
 	fmt.Println(usage)
 	os.Exit(rc)
@@ -129,8 +137,10 @@ func main() {
 		}
 
 		log.Infof("Loaded plugins: %s", strings.Join(conf.PluginNames(), " "))
+		fmt.Printf("Loaded plugins: %s \n", strings.Join(conf.PluginNames(), " "))
 
 		var wg sync.WaitGroup
+		//wg.Add(4)
 		wg.Add(3)
 		go func() {
 			defer wg.Done()
@@ -149,6 +159,12 @@ func main() {
 
 			startStatsd(shutdown, conf)
 		}()
+
+		//go func() {
+		//	defer wg.Done()
+		//	startFilebeat(shutdown, conf)
+		//}()
+
 		wg.Wait()
 	}
 }

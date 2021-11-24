@@ -1,7 +1,10 @@
 package agent
 
 import (
+	"bes-agent/py"
 	"fmt"
+	"github.com/sbinet/go-python"
+	"reflect"
 	"runtime"
 	"sort"
 	"sync"
@@ -40,20 +43,40 @@ func panicRecover(plugin *plugin.RunningPlugin) {
 	}
 }
 
+func (a *Agent) collectPython(shutdown chan struct{}, rpp *plugin.RunningPythonPlugin, interval time.Duration, metricC chan metric.Metric) error {
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+
+	//agg := NewAggregator(metricC, a.conf)
+	fmt.Println(metricC, "metricChannel?", reflect.TypeOf(metricC))
+
+	for {
+		collectPythonWithTimeout(shutdown, rpp, interval)
+
+		select {
+		case <-shutdown:
+			return nil
+		case <-ticker.C:
+			continue
+		}
+	}
+}
+
+func collectPythonWithTimeout(shutdown chan struct{}, rpp *plugin.RunningPythonPlugin, timeout time.Duration) {
+	fmt.Println("=============RunningPythonPlugin")
+	fmt.Println(rpp)
+}
+
 // collect runs the Plugins that have been configured with their own
 // reporting interval.
-func (a *Agent) collect(
-	shutdown chan struct{},
-	rp *plugin.RunningPlugin,
-	interval time.Duration,
-	metricC chan metric.Metric,
-) error {
+func (a *Agent) collect(shutdown chan struct{}, rp *plugin.RunningPlugin, interval time.Duration, metricC chan metric.Metric) error {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
 	agg := NewAggregator(metricC, a.conf)
 
 	for {
+		// plugins loop
 		collectWithTimeout(shutdown, rp, agg, interval)
 
 		select {
@@ -88,6 +111,7 @@ func collectWithTimeout(
 			defer wg.Done()
 
 			done <- plug.Check(agg)
+			//fmt.Println("Aggregator 冲洗 插件:", plug, reflect.TypeOf(plug))
 			agg.Flush()
 		}()
 
@@ -172,10 +196,10 @@ func (a *Agent) Test() error {
 	return nil
 }
 
-// Run runs the agent daemon, collecting every Interval
+// Agent Run runs the agent daemon, collecting every Interval
 func (a *Agent) Run(shutdown chan struct{}) error {
 	var wg sync.WaitGroup
-	interval := 30 * time.Second
+	interval := 15 * time.Second
 
 	// channel shared between all Plugin threads for collecting metrics
 	metricC := make(chan metric.Metric, 10000)
@@ -189,10 +213,58 @@ func (a *Agent) Run(shutdown chan struct{}) error {
 		}
 	}()
 
-	wg.Add(len(a.conf.Plugins))
+	////py.PyRun()  // 加载aggregator
+	err := py.LoadPy() // 加载aggregator、python、相关
+	fmt.Println("@@@@LoadPy err:", err)
+	//依赖
+	defer python.Finalize()
+
+	//运行所有插件  暂时写到了支持普通函数
+	wg.Add(len(a.conf.PythonPlugins)) // config.Plugins []*plugin.RunningPlugin
+	for _, p := range a.conf.PythonPlugins {
+		fmt.Println("agent.go: run python plugin ", p, "")
+		go func(pluginModule string) {
+			defer wg.Done()
+			pythonRunningModule := python.PyImport_ImportModule(pluginModule)
+			if pythonRunningModule == nil {
+				panic("pythonRunningModule is nil") //pluginModule
+			}
+			pythonRunningModule.CallMethod("test", python.PyTuple_New(0))
+			//checkFunc := pythonRunningModule.GetAttrString("check")
+			//if checkFunc == nil {
+			//	panic("Error importing function")
+			//}
+			//// The Python function takes no params but when using the C api
+			//// we're required to send (empty) *args and **kwargs anyways.
+			//checkFunc.Call(python.PyTuple_New(0), python.PyDict_New())
+		}(p.Plugin)
+	}
+
+	//wg.Add(len(a.conf.PythonPlugins))  // config.Plugins []*plugin.RunningPlugin
+	//for _, p := range a.conf.PythonPlugins {
+	//	fmt.Println("agent.go: run python plugin ", p, "")
+	//	defer wg.Done()
+	//	pythonRunningModule := python.PyImport_ImportModule(p.Plugin)
+	//	if pythonRunningModule == nil {
+	//		panic("pythonRunningModule is nil")  //pluginModule
+	//	}
+	//	pythonRunningModule.CallMethod("test", python.PyTuple_New(0))
+	//
+	//	//go func(rpp *plugin.RunningPythonPlugin, interval time.Duration){
+	//	//	defer wg.Done()
+	//	//	if err := a.collectPython(shutdown, rpp, interval, metricC); err != nil {
+	//	//		log.Info(err.Error())
+	//	//	}
+	//	//}(p, interval)
+	//
+	//}
+
+	wg.Add(len(a.conf.Plugins)) // config.Plugins []*plugin.RunningPlugin
 	for _, p := range a.conf.Plugins {
+		fmt.Println("agent.go: run plugin ", p, "")
 		go func(rp *plugin.RunningPlugin, interval time.Duration) {
 			defer wg.Done()
+			// aggregator collectWithTimeout
 			if err := a.collect(shutdown, rp, interval, metricC); err != nil {
 				log.Info(err.Error())
 			}
