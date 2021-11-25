@@ -19,5 +19,3 @@
 
 def test():
     print "  hello_python_plugin2 test function   >. <"
-    print "  hello_python_plugin2 test function   >. <"
-    print "  hello_python_plugin2 test function   >. <"

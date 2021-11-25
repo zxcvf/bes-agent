@@ -213,33 +213,47 @@ func (a *Agent) Run(shutdown chan struct{}) error {
 		}
 	}()
 
-	////py.PyRun()  // 加载aggregator
-	err := py.LoadPy() // 加载aggregator、python、相关
+	python.Initialize()
+	err := py.LoadPy() // 加载aggregator、python、相关依赖
+	//defer python.Finalize()
+	// 加载collector.plugins模块 再加载collector.plugins.test()等函数、类
 	fmt.Println("@@@@LoadPy err:", err)
-	//依赖
-	defer python.Finalize()
 
 	//运行所有插件  暂时写到了支持普通函数
-	wg.Add(len(a.conf.PythonPlugins)) // config.Plugins []*plugin.RunningPlugin
-	for _, p := range a.conf.PythonPlugins {
-		fmt.Println("agent.go: run python plugin ", p, "")
-		go func(pluginModule string) {
-			defer wg.Done()
-			pythonRunningModule := python.PyImport_ImportModule(pluginModule)
-			if pythonRunningModule == nil {
-				panic("pythonRunningModule is nil") //pluginModule
-			}
-			pythonRunningModule.CallMethod("test", python.PyTuple_New(0))
-			//checkFunc := pythonRunningModule.GetAttrString("check")
-			//if checkFunc == nil {
-			//	panic("Error importing function")
-			//}
-			//// The Python function takes no params but when using the C api
-			//// we're required to send (empty) *args and **kwargs anyways.
-			//checkFunc.Call(python.PyTuple_New(0), python.PyDict_New())
-		}(p.Plugin)
-	}
+	//wg.Add(len(a.conf.PythonPlugins)) // config.Plugins []*plugin.RunningPlugin
+	//for _, p := range a.conf.PythonPlugins{
+	//	pythonRunningModule := python.PyImport_ImportModule(p.Plugin)
+	//	go func(pluginModule string, pythonRunningModule *python.PyObject) {
+	//		defer wg.Done()
+	//	    // 在goroutine里会报错？
+	//		//pythonRunningModule := python.PyImport_ImportModule(pluginModule)
+	//		pythonRunningModule.CallMethod("test", python.PyTuple_New(0))
+	//	}(p.Plugin, pythonRunningModule)
+	//	//fmt.Println(pythonRunningModule)
+	//}
 
+	// 简单调用脚本
+	//wg.Add(len(a.conf.PythonPlugins)) // config.Plugins []*plugin.RunningPlugin
+	//for _, p := range a.conf.PythonPlugins {
+	//	fmt.Println("agent.go: run python plugin ", p, "")
+	//	go func(pluginModule string) {
+	//		defer wg.Done()
+	//		pythonRunningModule := python.PyImport_ImportModule(pluginModule)
+	//		if pythonRunningModule == nil {
+	//			panic("pythonRunningModule is nil") //pluginModule
+	//		}
+	//		pythonRunningModule.CallMethod("test", python.PyTuple_New(0))
+	//		//checkFunc := pythonRunningModule.GetAttrString("check")
+	//		//if checkFunc == nil {
+	//		//	panic("Error importing function")
+	//		//}
+	//		//// The Python function takes no params but when using the C api
+	//		//// we're required to send (empty) *args and **kwargs anyways.
+	//		//checkFunc.Call(python.PyTuple_New(0), python.PyDict_New())
+	//	}(p.Plugin)
+	//}
+
+	// load
 	//wg.Add(len(a.conf.PythonPlugins))  // config.Plugins []*plugin.RunningPlugin
 	//for _, p := range a.conf.PythonPlugins {
 	//	fmt.Println("agent.go: run python plugin ", p, "")
@@ -249,14 +263,12 @@ func (a *Agent) Run(shutdown chan struct{}) error {
 	//		panic("pythonRunningModule is nil")  //pluginModule
 	//	}
 	//	pythonRunningModule.CallMethod("test", python.PyTuple_New(0))
-	//
 	//	//go func(rpp *plugin.RunningPythonPlugin, interval time.Duration){
 	//	//	defer wg.Done()
 	//	//	if err := a.collectPython(shutdown, rpp, interval, metricC); err != nil {
 	//	//		log.Info(err.Error())
 	//	//	}
 	//	//}(p, interval)
-	//
 	//}
 
 	wg.Add(len(a.conf.Plugins)) // config.Plugins []*plugin.RunningPlugin

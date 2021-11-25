@@ -185,7 +185,6 @@ func (c *Config) addPlugin(name string, pluginConfig *plugin.Config) error {
 		return nil
 	}
 
-	// load python 插件
 	//if ok2 {
 	//	for i, instance := range pluginConfig.Instances {
 	//		err := py.LoadPlugin(name, instance)
