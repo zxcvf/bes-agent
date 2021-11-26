@@ -44,7 +44,7 @@ type Config struct {
 	GlobalConfig  GlobalConfig  `toml:"global"`
 	LoggingConfig LoggingConfig `toml:"logging"`
 	Plugins       []*plugin.RunningPlugin
-	PythonPlugins []*plugin.RunningPythonPlugin
+	PythonPlugins []*plugin.RunningPythonPlugin // 注册的python 插件
 	pluginFilters []string
 	ProjectPath   string
 }
@@ -60,6 +60,8 @@ type GlobalConfig struct {
 	ListenPort      int    `toml:"listen_port"`
 	StatsdPort      int    `toml:"statsd_port"`
 	NonLocalTraffic bool   `toml:"non_local_traffic"`
+
+	PythonPlugin bool `toml:"python_plugin"`
 }
 
 // LoggingConfig XXX
@@ -104,6 +106,7 @@ func getPath(paths ...string) (string, error) {
 // LoadConfig XXX
 func (c *Config) LoadConfig(confPath string) error {
 	var err error
+
 	if confPath == "" {
 		if confPath, err = getDefaultConfigPath(); err != nil {
 			return err
@@ -142,8 +145,6 @@ func (c *Config) LoadConfig(confPath string) error {
 		filename := path.Base(file)
 		pluginName := strings.Split(filename, ".")[0]
 
-		// 通过插件名和配置文件 新增插件
-		//py.LoadPy()
 		err = c.addPlugin(pluginName, pluginConfig)
 		fmt.Println(err)
 
@@ -177,30 +178,20 @@ func (c *Config) addPlugin(name string, pluginConfig *plugin.Config) error {
 	// load python 插件
 	if ok2 {
 		rpp := plugin.RunningPythonPlugin{
-			Name:   name,
-			Plugin: pythonModule,
+			Name:       name,
+			Module:     pythonModule,
+			InitConfig: pluginConfig.InitConfig,
+			Instances:  pluginConfig.Instances,
 		}
-		// 先跳过多个instances循环
+
 		c.PythonPlugins = append(c.PythonPlugins, &rpp)
 		return nil
 	}
 
-	//if ok2 {
-	//	for i, instance := range pluginConfig.Instances {
-	//		err := py.LoadPlugin(name, instance)
-	//		if err != nil {
-	//			log.Errorf("ERROR to parse plugin instance [%s#%d]: %s", name, i, err)
-	//			continue
-	//		}
-	//	}
-	//	fmt.Println(pythonModule)
-	//	return nil
-	//}
-
 	// golang 新增running plugin
 	plug := checker(pluginConfig.InitConfig)
 
-	// 一个插件的多个instance
+	// check 级别， 一个插件的多个instance
 	plugs := make([]plugin.Plugin, len(pluginConfig.Instances))
 	for i, instance := range pluginConfig.Instances {
 		err := util.FillStruct(instance, plug)
@@ -265,6 +256,11 @@ func (c *Config) GetHostname() string {
 		log.Error(err)
 	}
 	return hostname
+}
+
+func (c *Config) GetPythonPlugin() bool {
+	pythonPlugin := c.GlobalConfig.PythonPlugin
+	return pythonPlugin
 }
 
 //InitializeLogging initializes logging level and output according to the agent configuration.

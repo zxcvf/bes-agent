@@ -2,6 +2,7 @@ package main
 
 import (
 	"bes-agent/common/filebeat"
+	"bes-agent/py"
 	"flag"
 	"fmt"
 	"os"
@@ -49,6 +50,13 @@ Examples:
 `
 
 func startAgent(shutdown chan struct{}, conf *config.Config, test bool) {
+	//if conf
+	// 通过插件名和配置文件 新增插件
+	if conf.GlobalConfig.PythonPlugin {
+		err := py.LoadPy()
+		fmt.Println("@@@@LoadPy err:", err)
+	}
+
 	ag := agent.NewAgent(conf)
 	if test {
 		log.SetLevel("error")

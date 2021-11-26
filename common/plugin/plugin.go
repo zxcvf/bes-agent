@@ -15,16 +15,18 @@ type Plugin interface {
 	Check(agg metric.Aggregator) error
 }
 
-// RunningPlugin XXX
+// RunningPlugin 里面放配置好的checks
 type RunningPlugin struct {
 	Name    string
 	Plugins []Plugin
 }
 
-// RunningPythonPlugin XXX
+// RunningPythonPlugin 里面放待加载Instances
 type RunningPythonPlugin struct {
-	Name   string
-	Plugin string // 先跳过instances (目前是python模块)
+	Name       string
+	Module     string // 模块
+	InitConfig InitConfig
+	Instances  []Instance
 }
 
 // InitConfig XXX

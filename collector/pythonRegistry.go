@@ -94,6 +94,7 @@ func PythonAdd(name string, module string) {
 
 // 注册所有python插件
 func init() {
+	fmt.Println("init python registry")
 	setPythonEnvPath()
 	files, _ := GetPythonPaths()
 

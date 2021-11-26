@@ -3,7 +3,6 @@ package agent
 import (
 	"bes-agent/py"
 	"fmt"
-	"github.com/sbinet/go-python"
 	"reflect"
 	"runtime"
 	"sort"
@@ -213,62 +212,39 @@ func (a *Agent) Run(shutdown chan struct{}) error {
 		}
 	}()
 
-	python.Initialize()
-	err := py.LoadPy() // 加载aggregator、python、相关依赖
+	// 在startAgent中做了
+	//python.Initialize()
+	//err := py.LoadPy() // 加载aggregator、python、相关依赖
 	//defer python.Finalize()
 	// 加载collector.plugins模块 再加载collector.plugins.test()等函数、类
-	fmt.Println("@@@@LoadPy err:", err)
 
-	//运行所有插件  暂时写到了支持普通函数
-	//wg.Add(len(a.conf.PythonPlugins)) // config.Plugins []*plugin.RunningPlugin
-	//for _, p := range a.conf.PythonPlugins{
-	//	pythonRunningModule := python.PyImport_ImportModule(p.Plugin)
-	//	go func(pluginModule string, pythonRunningModule *python.PyObject) {
-	//		defer wg.Done()
-	//	    // 在goroutine里会报错？
-	//		//pythonRunningModule := python.PyImport_ImportModule(pluginModule)
-	//		pythonRunningModule.CallMethod("test", python.PyTuple_New(0))
-	//	}(p.Plugin, pythonRunningModule)
-	//	//fmt.Println(pythonRunningModule)
-	//}
+	if a.conf.GlobalConfig.PythonPlugin { // 是否启用python脚本
 
-	// 简单调用脚本
-	//wg.Add(len(a.conf.PythonPlugins)) // config.Plugins []*plugin.RunningPlugin
-	//for _, p := range a.conf.PythonPlugins {
-	//	fmt.Println("agent.go: run python plugin ", p, "")
-	//	go func(pluginModule string) {
-	//		defer wg.Done()
-	//		pythonRunningModule := python.PyImport_ImportModule(pluginModule)
-	//		if pythonRunningModule == nil {
-	//			panic("pythonRunningModule is nil") //pluginModule
-	//		}
-	//		pythonRunningModule.CallMethod("test", python.PyTuple_New(0))
-	//		//checkFunc := pythonRunningModule.GetAttrString("check")
-	//		//if checkFunc == nil {
-	//		//	panic("Error importing function")
-	//		//}
-	//		//// The Python function takes no params but when using the C api
-	//		//// we're required to send (empty) *args and **kwargs anyways.
-	//		//checkFunc.Call(python.PyTuple_New(0), python.PyDict_New())
-	//	}(p.Plugin)
-	//}
+		//checks := []check.Check{}
+		for _, p := range a.conf.PythonPlugins {
+			py.LoadChecks(p)
+		}
 
-	// load
-	//wg.Add(len(a.conf.PythonPlugins))  // config.Plugins []*plugin.RunningPlugin
-	//for _, p := range a.conf.PythonPlugins {
-	//	fmt.Println("agent.go: run python plugin ", p, "")
-	//	defer wg.Done()
-	//	pythonRunningModule := python.PyImport_ImportModule(p.Plugin)
-	//	if pythonRunningModule == nil {
-	//		panic("pythonRunningModule is nil")  //pluginModule
+		//plugins, err := py.LoadChecks(a.conf.PythonPlugins)
+		//if err != nil{
+		//	fmt.Println("py.LoadPlugin find error", err)
+		//}
+		//fmt.Println(plugins)
+	}
+
+	//if a.conf.GlobalConfig.PythonPlugin {  // 是否启用python脚本
+	//	wg.Add(len(a.conf.PythonPlugins)) // config.Plugins []*plugin.RunningPlugin
+	//	state := python.PyEval_SaveThread()
+	//	for _, p := range a.conf.PythonPlugins{
+	//		go func(pluginModule string) {
+	//			err := py.RunFunc(pluginModule, &wg)
+	//			if err != nil{
+	//				fmt.Println(err)
+	//			}
+	//		}(p.Module)
 	//	}
-	//	pythonRunningModule.CallMethod("test", python.PyTuple_New(0))
-	//	//go func(rpp *plugin.RunningPythonPlugin, interval time.Duration){
-	//	//	defer wg.Done()
-	//	//	if err := a.collectPython(shutdown, rpp, interval, metricC); err != nil {
-	//	//		log.Info(err.Error())
-	//	//	}
-	//	//}(p, interval)
+	//	defer python.Finalize()
+	//	defer python.PyEval_RestoreThread(state)
 	//}
 
 	wg.Add(len(a.conf.Plugins)) // config.Plugins []*plugin.RunningPlugin
@@ -284,5 +260,6 @@ func (a *Agent) Run(shutdown chan struct{}) error {
 	}
 
 	wg.Wait()
+
 	return nil
 }

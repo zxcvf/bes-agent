@@ -43,10 +43,10 @@ const (
 	pyIntegrationListFunc = "get_datadog_wheels"
 )
 
-// newStickyLock register the current thread with the interpreter and locks
+// NewStickyLock register the current thread with the interpreter and locks
 // the GIL. It also sticks the goroutine to the current thread so that a
 // subsequent call to `Unlock` will unregister the very same thread.
-func newStickyLock() *stickyLock {
+func NewStickyLock() *stickyLock {
 	runtime.LockOSThread()
 	return &stickyLock{
 		gstate: python.PyGILState_Ensure(),
@@ -227,7 +227,7 @@ func decAllRefs(refs []*python.PyObject) {
 
 // GetPythonInterpreterMemoryUsage collects python interpreter memory usage
 func GetPythonInterpreterMemoryUsage() ([]*PythonStats, error) {
-	glock := newStickyLock()
+	glock := NewStickyLock()
 	defer glock.unlock()
 
 	memStatModule := python.PyImport_ImportModule(pyMemModule)
@@ -398,7 +398,7 @@ func GetPythonInterpreterMemoryUsage() ([]*PythonStats, error) {
 
 // GetPythonIntegrationList collects python datadog installed integrations list
 func GetPythonIntegrationList() ([]string, error) {
-	glock := newStickyLock()
+	glock := NewStickyLock()
 	defer glock.unlock()
 
 	pkgModule := python.PyImport_ImportModule(pyPkgModule)
