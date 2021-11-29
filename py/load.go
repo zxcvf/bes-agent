@@ -35,9 +35,9 @@ func LoadPy() error {
 }
 
 // 将插件中的类 加载出instances对应obj
-func LoadChecks(rpp *plugin.RunningPythonPlugin) ([]PythonCheck, error) {
+func LoadChecks(rpp *plugin.RunningPythonPlugin) ([]*PythonCheck, error) {
 	var err error
-	checks := []PythonCheck{}
+	checks := []*PythonCheck{}
 	glock := NewStickyLock() // GIL需要从从循环外部传入
 
 	// windows 需要加  目前暂时不支持windows
@@ -84,8 +84,12 @@ func LoadChecks(rpp *plugin.RunningPythonPlugin) ([]PythonCheck, error) {
 			fmt.Errorf("py.loader: could not configure check '%s': %s", rpp.Name, err)
 			continue
 		}
-
+		checks = append(checks, check)
 	}
 
+	glock = NewStickyLock()
+	defer glock.unlock()
+	checkClass.DecRef()
+	fmt.Printf("python loader: done loading check %s \n", rpp.Module)
 	return checks, err
 }

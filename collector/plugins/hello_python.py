@@ -5,9 +5,8 @@ from . import AgentCheck
 
 class HelloPython(AgentCheck):
     def check(self, instance):
-        print ">" * 20
-        print "  hello_python_plugin   >. < ohhhhhhhhhhhh success!!!!!!!"
-        print "<" * 20
+        print "  hello_python_plugin   >. < ohhhhhhhhhhhh success!!!!!!!\n"
+        self.gauge("demo_gauge", 321, tags={"tagk": "tagv"}, hostname=None, device_name=None)
 
 
 def test():

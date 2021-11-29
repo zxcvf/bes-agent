@@ -3,6 +3,7 @@ package agent
 import (
 	"bes-agent/py"
 	"fmt"
+	"github.com/sbinet/go-python"
 	"reflect"
 	"runtime"
 	"sort"
@@ -219,17 +220,23 @@ func (a *Agent) Run(shutdown chan struct{}) error {
 	// 加载collector.plugins模块 再加载collector.plugins.test()等函数、类
 
 	if a.conf.GlobalConfig.PythonPlugin { // 是否启用python脚本
-
-		//checks := []check.Check{}
+		state := python.PyEval_SaveThread()
+		defer python.PyEval_RestoreThread(state)
 		for _, p := range a.conf.PythonPlugins {
-			py.LoadChecks(p)
+			checks, err := py.LoadChecks(p)
+			if err != nil {
+				fmt.Println("py.LoadChecks err: %s \n", err)
+			}
+			wg.Add(len(checks))
+			for _, check := range checks {
+				go func(check *py.PythonCheck) {
+					defer wg.Done()
+					//check.RunSimple()
+					check.Run()
+				}(check)
+			}
 		}
 
-		//plugins, err := py.LoadChecks(a.conf.PythonPlugins)
-		//if err != nil{
-		//	fmt.Println("py.LoadPlugin find error", err)
-		//}
-		//fmt.Println(plugins)
 	}
 
 	//if a.conf.GlobalConfig.PythonPlugin {  // 是否启用python脚本
@@ -247,7 +254,7 @@ func (a *Agent) Run(shutdown chan struct{}) error {
 	//	defer python.PyEval_RestoreThread(state)
 	//}
 
-	wg.Add(len(a.conf.Plugins)) // config.Plugins []*plugin.RunningPlugin
+	wg.Add(len(a.conf.Plugins))
 	for _, p := range a.conf.Plugins {
 		fmt.Println("agent.go: run plugin ", p, "")
 		go func(rp *plugin.RunningPlugin, interval time.Duration) {
