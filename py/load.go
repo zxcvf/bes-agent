@@ -90,6 +90,6 @@ func LoadChecks(rpp *plugin.RunningPythonPlugin) ([]*PythonCheck, error) {
 	glock = NewStickyLock()
 	defer glock.unlock()
 	checkClass.DecRef()
-	fmt.Printf("python loader: done loading check %s \n", rpp.Module)
+	//fmt.Printf("python loader: done loading check %s \n", rpp.Module)
 	return checks, err
 }

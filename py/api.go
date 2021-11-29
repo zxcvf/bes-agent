@@ -184,6 +184,21 @@ func SubmitMetric(
 	hostname *C.char,
 ) *C.PyObject {
 
+	goCheckID := C.GoString(checkID)
+	_name := C.GoString(name)
+	_value := float64(value)
+	_tags, err := extractTags(tags)
+	_hostname := C.GoString(hostname)
+	fmt.Println("> SubmitMetric", goCheckID, _name, _value, _tags, err, _hostname)
+	//fmt.Println("> PythonAggregatorPool", PythonAggregatorPool)
+
+	agg := PythonAggregatorPool[ID(goCheckID)]
+
+	fmt.Println(agg)
+
+	// todo 使用AGG 上报
+	fmt.Println("goCheckID", goCheckID)
+
 	return nil
 	//goCheckID := C.GoString(checkID)
 	//var sender aggregator.Sender

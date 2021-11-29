@@ -2,6 +2,7 @@ package py
 
 import (
 	"bes-agent/common/log"
+	"bes-agent/common/metric"
 	"bes-agent/common/plugin"
 	"errors"
 	"fmt"
@@ -82,16 +83,18 @@ func (c *PythonCheck) Configure(data plugin.Instance, initConfig plugin.InitConf
 }
 
 // Run 运行python插件
-func (c *PythonCheck) Run() error {
+func (c *PythonCheck) Run(agg metric.Aggregator) error {
+	PythonAggregatorPool[c.ID()] = &agg
+	//fmt.Println("RUNheckID", c.ID())
+
 	gstate := NewStickyLock()
 	defer gstate.unlock()
 
-	fmt.Printf(" Running python check %s %s \n", c.ModuleName, c.id)
+	//fmt.Printf(" Running python check %s %s \n", c.ModuleName, c.id)
 	emptyTuple := python.PyTuple_New(0)
 	defer emptyTuple.DecRef()
 
 	result := c.instance.CallMethod("run", emptyTuple)
-	fmt.Printf("Simple Run returned for %s %s \n", c.ModuleName, c.id)
 	if result == nil {
 		pyErr, err := gstate.getPythonError()
 		if err != nil {
@@ -113,7 +116,7 @@ func (c *PythonCheck) Run() error {
 	return errors.New(resultStr)
 }
 
-// RunSimple 运行python插件 不适用聚合器上报数据
+// RunSimple 运行python插件 不使用聚合器上报数据
 func (c *PythonCheck) RunSimple() error {
 	gstate := NewStickyLock()
 	defer gstate.unlock()

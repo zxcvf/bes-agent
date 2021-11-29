@@ -4,7 +4,6 @@ import (
 	"bes-agent/py"
 	"fmt"
 	"github.com/sbinet/go-python"
-	"reflect"
 	"runtime"
 	"sort"
 	"sync"
@@ -43,16 +42,19 @@ func panicRecover(plugin *plugin.RunningPlugin) {
 	}
 }
 
-func (a *Agent) collectPython(shutdown chan struct{}, rpp *plugin.RunningPythonPlugin, interval time.Duration, metricC chan metric.Metric) error {
+func (a *Agent) collectPython(
+	shutdown chan struct{},
+	rpp *plugin.RunningPythonPlugin,
+	interval time.Duration,
+	metricC chan metric.Metric,
+) error {
+
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
-	//agg := NewAggregator(metricC, a.conf)
-	fmt.Println(metricC, "metricChannel?", reflect.TypeOf(metricC))
-
+	agg := py.NewPythonSimpleAggregator(metricC, a.conf)
 	for {
-		collectPythonWithTimeout(shutdown, rpp, interval)
-
+		collectPythonWithTimeout(shutdown, rpp, agg, interval)
 		select {
 		case <-shutdown:
 			return nil
@@ -62,14 +64,59 @@ func (a *Agent) collectPython(shutdown chan struct{}, rpp *plugin.RunningPythonP
 	}
 }
 
-func collectPythonWithTimeout(shutdown chan struct{}, rpp *plugin.RunningPythonPlugin, timeout time.Duration) {
-	fmt.Println("=============RunningPythonPlugin")
-	fmt.Println(rpp)
+func collectPythonWithTimeout(
+	shutdown chan struct{},
+	rpp *plugin.RunningPythonPlugin,
+	agg metric.Aggregator,
+	timeout time.Duration,
+) {
+
+	ticker := time.NewTicker(timeout)
+	defer ticker.Stop()
+	done := make(chan error)
+
+	checks, err := py.LoadChecks(rpp)
+	if err != nil {
+		fmt.Println("py.LoadChecks err: %s \n ", err)
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(len(checks))
+	for i, check := range checks {
+		go func(check *py.PythonCheck) {
+			defer wg.Done()
+			//done <- check.RunSimple()
+			done <- check.Run(agg)
+
+		}(check)
+
+		select {
+		case err := <-done:
+			if err != nil {
+				log.Errorf("ERROR to check plugin instance [%s#%d]: %s", rpp.Name, i, err)
+			}
+		case <-ticker.C:
+			log.Infof("ERROR: plugin instance [%s#%d] took longer to collect than "+
+				"collection interval (%s)",
+				rpp.Name, i, timeout)
+		case <-shutdown:
+			return
+		}
+
+	}
+
+	wg.Wait()
+
 }
 
 // collect runs the Plugins that have been configured with their own
 // reporting interval.
-func (a *Agent) collect(shutdown chan struct{}, rp *plugin.RunningPlugin, interval time.Duration, metricC chan metric.Metric) error {
+func (a *Agent) collect(
+	shutdown chan struct{},
+	rp *plugin.RunningPlugin,
+	interval time.Duration,
+	metricC chan metric.Metric,
+) error {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
@@ -219,26 +266,26 @@ func (a *Agent) Run(shutdown chan struct{}) error {
 	//defer python.Finalize()
 	// 加载collector.plugins模块 再加载collector.plugins.test()等函数、类
 
-	if a.conf.GlobalConfig.PythonPlugin { // 是否启用python脚本
-		state := python.PyEval_SaveThread()
-		defer python.PyEval_RestoreThread(state)
-		for _, p := range a.conf.PythonPlugins {
-			checks, err := py.LoadChecks(p)
-			if err != nil {
-				fmt.Println("py.LoadChecks err: %s \n", err)
-			}
-			wg.Add(len(checks))
-			for _, check := range checks {
-				go func(check *py.PythonCheck) {
-					defer wg.Done()
-					//check.RunSimple()
-					check.Run()
-				}(check)
-			}
-		}
+	// RunSimple
+	//if a.conf.GlobalConfig.PythonPlugin { // 是否启用python脚本
+	//	state := python.PyEval_SaveThread()
+	//	defer python.PyEval_RestoreThread(state)
+	//	for _, p := range a.conf.PythonPlugins {
+	//		checks, err := py.LoadChecks(p)
+	//		if err != nil {
+	//			fmt.Println("py.LoadChecks err: %s \n", err)
+	//		}
+	//		wg.Add(len(checks))
+	//		for _, check := range checks {
+	//			go func(check *py.PythonCheck) {
+	//				defer wg.Done()
+	//				check.RunSimple()
+	//			}(check)
+	//		}
+	//	}
+	//}
 
-	}
-
+	// RunRunc
 	//if a.conf.GlobalConfig.PythonPlugin {  // 是否启用python脚本
 	//	wg.Add(len(a.conf.PythonPlugins)) // config.Plugins []*plugin.RunningPlugin
 	//	state := python.PyEval_SaveThread()
@@ -254,12 +301,38 @@ func (a *Agent) Run(shutdown chan struct{}) error {
 	//	defer python.PyEval_RestoreThread(state)
 	//}
 
+	// 不使用 pluginLoop(checkLoop) goroutine的形式 直接循环所有check
+	wg.Add(len(a.conf.PythonPlugins))
+	state := python.PyEval_SaveThread()
+	defer python.PyEval_RestoreThread(state)
+	for _, p := range a.conf.PythonPlugins {
+		fmt.Println("agent.go: run python plugin ", p, "")
+		go func(rp *plugin.RunningPythonPlugin, interval time.Duration) {
+			defer wg.Done()
+			if err := a.collectPython(shutdown, rp, interval, metricC); err != nil {
+				log.Info(err.Error())
+			}
+		}(p, interval)
+
+		continue
+		checks, err := py.LoadChecks(p)
+		if err != nil {
+			fmt.Printf("py.LoadChecks err: %s \n ", err)
+		}
+		wg.Add(len(checks))
+		for _, check := range checks {
+			go func(check *py.PythonCheck) {
+				defer wg.Done()
+				check.RunSimple()
+			}(check)
+		}
+	}
+
 	wg.Add(len(a.conf.Plugins))
 	for _, p := range a.conf.Plugins {
 		fmt.Println("agent.go: run plugin ", p, "")
 		go func(rp *plugin.RunningPlugin, interval time.Duration) {
 			defer wg.Done()
-			// aggregator collectWithTimeout
 			if err := a.collect(shutdown, rp, interval, metricC); err != nil {
 				log.Info(err.Error())
 			}
