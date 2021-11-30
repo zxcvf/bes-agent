@@ -98,6 +98,7 @@ func (c *PythonCheck) Run(agg metric.Aggregator) error {
 	if result == nil {
 		pyErr, err := gstate.getPythonError()
 		if err != nil {
+			fmt.Printf("An error occurred while running python check and couldn't be formatted: %v \n ", err)
 			return fmt.Errorf("An error occurred while running python check and couldn't be formatted: %v \n", err)
 		}
 		return errors.New(pyErr)

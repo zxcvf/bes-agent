@@ -295,5 +295,4 @@ class AgentCheck(object):
                     "traceback": traceback.format_exc(),
                 }
             ])
-
         return result

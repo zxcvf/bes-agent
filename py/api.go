@@ -48,7 +48,7 @@ static PyObject *submit_metric(PyObject *self, PyObject *args) {
     PyGILState_STATE gstate;
     gstate = PyGILState_Ensure();
 
-    // aggregator.submit_metric(self, check_id, aggregator.metric_type.GAUGE, name, value, tags, hostname)
+    //aggregator.submit_metric(self, check_id, aggregator.metric_type.GAUGE, name, value, tags, hostname)
     if (!PyArg_ParseTuple(args, "OsisfOs", &check, &check_id, &mt, &name, &value, &tags, &hostname)) {
       PyGILState_Release(gstate);
       return NULL;
@@ -165,10 +165,33 @@ Py_ssize_t PySequence_Fast_Get_Size(PyObject *o)
 */
 import "C"
 import (
+	"bes-agent/common/log"
+	"bes-agent/common/metric"
 	"errors"
 	"fmt"
+	"time"
 	"unsafe"
 )
+
+func metricTypeString(mt C.MetricType) string {
+	switch mt {
+	case C.GAUGE:
+		return "gauge"
+	case C.RATE:
+		return "rate"
+	case C.COUNT:
+		return "count"
+	case C.MONOTONIC_COUNT:
+		return "monotoniccount"
+	case C.COUNTER:
+		return "counter"
+	case C.HISTOGRAM:
+		return "histogram"
+	case C.HISTORATE:
+		return "historate"
+	}
+	return ""
+}
 
 // 在此export到头部C对SubmitMetric的声明中
 // https://stackoverflow.com/questions/58606884/multiple-definition-when-using-cgo
@@ -189,55 +212,23 @@ func SubmitMetric(
 	_value := float64(value)
 	_tags, err := extractTags(tags)
 	_hostname := C.GoString(hostname)
-	fmt.Println("> SubmitMetric", goCheckID, _name, _value, _tags, err, _hostname)
-	//fmt.Println("> PythonAggregatorPool", PythonAggregatorPool)
 
-	agg := PythonAggregatorPool[ID(goCheckID)]
+	if err != nil {
+		log.Errorf("%s metric tag extract error \n", _name)
+		return C._none()
+	}
 
-	fmt.Println(agg)
+	agg := *PythonAggregatorPool[ID(goCheckID)]
 
-	// todo 使用AGG 上报
-	fmt.Println("goCheckID", goCheckID)
+	agg.Add(metricTypeString(mt), metric.Metric{
+		Name:       _name,
+		Value:      _value,
+		Tags:       _tags,
+		DeviceName: _hostname,
+		Timestamp:  time.Now().Unix(),
+	})
 
-	return nil
-	//goCheckID := C.GoString(checkID)
-	//var sender aggregator.Sender
-	//var err error
-	//
-	//sender, err = aggregator.GetSender(chk.ID(goCheckID))
-	//
-	//if err != nil || sender == nil {
-	//	log.Errorf("Error submitting metric to the Sender: %v", err)
-	//	return C._none()
-	//}
-	//
-	//_name := C.GoString(name)
-	//_value := float64(value)
-	//_tags, err := extractTags(tags)
-	//if err != nil {
-	//	log.Error(err)
-	//	return nil
-	//}
-	//_hostname := C.GoString(hostname)
-	//
-	//switch mt {
-	//case C.GAUGE:
-	//	sender.Gauge(_name, _value, _hostname, _tags)
-	//case C.RATE:
-	//	sender.Rate(_name, _value, _hostname, _tags)
-	//case C.COUNT:
-	//	sender.Count(_name, _value, _hostname, _tags)
-	//case C.MONOTONIC_COUNT:
-	//	sender.MonotonicCount(_name, _value, _hostname, _tags)
-	//case C.COUNTER:
-	//	sender.Counter(_name, _value, _hostname, _tags)
-	//case C.HISTOGRAM:
-	//	sender.Histogram(_name, _value, _hostname, _tags)
-	//case C.HISTORATE:
-	//	sender.Historate(_name, _value, _hostname, _tags)
-	//}
-	//
-	//return C._none()
+	return C._none()
 }
 
 //export SubmitServiceCheck
@@ -247,7 +238,6 @@ func SubmitServiceCheck(check *C.PyObject, checkID *C.char, name *C.char, status
 
 //export SubmitEvent
 func SubmitEvent(check *C.PyObject, checkID *C.char, event *C.PyObject) *C.PyObject {
-
 	return C._none()
 }
 

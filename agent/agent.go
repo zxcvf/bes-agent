@@ -52,7 +52,7 @@ func (a *Agent) collectPython(
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
-	agg := py.NewPythonSimpleAggregator(metricC, a.conf)
+	agg := NewAggregator(metricC, a.conf)
 	for {
 		collectPythonWithTimeout(shutdown, rpp, agg, interval)
 		select {
@@ -77,7 +77,7 @@ func collectPythonWithTimeout(
 
 	checks, err := py.LoadChecks(rpp)
 	if err != nil {
-		fmt.Println("py.LoadChecks err: %s \n ", err)
+		fmt.Printf("py.LoadChecks err: %s \n ", err)
 	}
 
 	var wg sync.WaitGroup
@@ -87,12 +87,13 @@ func collectPythonWithTimeout(
 			defer wg.Done()
 			//done <- check.RunSimple()
 			done <- check.Run(agg)
-
+			agg.Flush()
 		}(check)
 
 		select {
 		case err := <-done:
 			if err != nil {
+				fmt.Printf("ERROR to check plugin instance [%s#%d]: %s", rpp.Name, i, err)
 				log.Errorf("ERROR to check plugin instance [%s#%d]: %s", rpp.Name, i, err)
 			}
 		case <-ticker.C:
@@ -313,19 +314,6 @@ func (a *Agent) Run(shutdown chan struct{}) error {
 				log.Info(err.Error())
 			}
 		}(p, interval)
-
-		continue
-		checks, err := py.LoadChecks(p)
-		if err != nil {
-			fmt.Printf("py.LoadChecks err: %s \n ", err)
-		}
-		wg.Add(len(checks))
-		for _, check := range checks {
-			go func(check *py.PythonCheck) {
-				defer wg.Done()
-				check.RunSimple()
-			}(check)
-		}
 	}
 
 	wg.Add(len(a.conf.Plugins))

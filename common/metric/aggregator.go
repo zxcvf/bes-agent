@@ -134,6 +134,8 @@ func (agg *aggregator) SubmitPackets(
 }
 
 func (agg *aggregator) Add(metricType string, m Metric) {
+	fmt.Println(m.Tags)
+
 	if m.Hostname == "" {
 		m.Hostname = agg.hostname
 	}
